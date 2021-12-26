@@ -43,7 +43,7 @@ class StrTest extends UnitTestCase
         ];
     }
 
-    /** @param */
+    /** @test */
     public function starts_with(): void
     {
         $this->assertTrue(Str::startsWith('hello', 'h'));
@@ -51,11 +51,11 @@ class StrTest extends UnitTestCase
         $this->assertTrue(Str::startsWith('3xample', '3'));
     }
 
-    /** @param */
+    /** @test */
     public function ends_with(): void
     {
         $this->assertTrue(Str::endsWith('hello', 'o'));
         $this->assertTrue(Str::endsWith('w0rld', 'd'));
-        $this->assertTrue(Str::endsWith('example', '3'));
+        $this->assertTrue(Str::endsWith('exampl3', '3'));
     }
 }
