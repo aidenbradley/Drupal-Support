@@ -1,0 +1,7 @@
+name: Drupal Support
+type: module
+description: 'Provides helper / support methods'
+package: Custom
+version: VERSION
+hidden: true
+core_version_requirement: ^8 || ^9
