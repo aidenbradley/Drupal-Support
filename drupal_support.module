@@ -1,6 +1,8 @@
 <?php
 
 use Drupal\Core\Url;
+use Drupal\drupal_support\HigherOrderTapProxy;
+use Drupal\drupal_support\Optional;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 //if (! function_exists('env')) {
@@ -75,15 +77,15 @@ if (! function_exists('route')) {
      */
     function route(string $route, array $parameters = [], array $options = []): string
     {
-        $generatedUrl = Url::fromRoute($route, $parameters, $options)->toString(true);
-
-        return $generatedUrl->getGeneratedUrl();
+        return Url::fromRoute($route, $parameters, $options)
+            ->toString(true)
+            ->getGeneratedUrl();
     }
 }
 
 if (! function_exists('url')) {
     /**
-     * Generate the URL to a named route.
+     * Generate the URL object from a named route.
      *
      * @param  mixed  $value
      * @param  callable|null  $callback

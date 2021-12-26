@@ -75,6 +75,24 @@ class HelpersTest extends KernelTestBase
     /** @test */
     public function rescue_helper(): void
     {
+        $class = new class {
+            public function throwException(): void
+            {
+                throw new \Exception();
+            }
 
+            public function returnHello(): string
+            {
+                return 'hello';
+            }
+        };
+
+        $this->assertEquals('fallback value', rescue(function() use ($class) {
+            $class->throwException();
+        }, 'fallback value'));
+
+        $this->assertEquals('hello', rescue(function() use ($class) {
+            return $class->returnHello();
+        }));
     }
 }
