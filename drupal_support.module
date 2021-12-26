@@ -1,0 +1,148 @@
+<?php
+
+use Drupal\Core\Url;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
+//if (! function_exists('env')) {
+//    /**
+//     * Gets the value of an environment variable.
+//     *
+//     * @param  string  $key
+//     * @param  mixed   $default
+//     * @return mixed
+//     */
+//    function env($key, $default = null)
+//    {
+//        $value = getenv($key);
+//
+//        if ($value === false || $value === '') {
+//            return value($default);
+//        }
+//
+//        switch (strtolower($value)) {
+//            case 'true':
+//            case '(true)':
+//                return true;
+//
+//            case 'false':
+//            case '(false)':
+//                return false;
+//
+//            case 'empty':
+//            case '(empty)':
+//                return '';
+//
+//            case 'null':
+//            case '(null)':
+//                return $default;
+//        }
+//
+//        if (Str::startsWith($value, '"') && Str::endsWith($value, '"')) {
+//            return substr($value, 1, -1);
+//        }
+//
+//        return $value;
+//    }
+//}
+
+if (! function_exists('tap')) {
+    /**
+     * Call the given Closure with the given value then return the value.
+     *
+     * @param  mixed  $value
+     * @param  callable|null  $callback
+     * @return mixed
+     */
+    function tap($value, $callback = null)
+    {
+        if (is_null($callback)) {
+            return new HigherOrderTapProxy($value);
+        }
+
+        $callback($value);
+
+        return $value;
+    }
+}
+
+if (! function_exists('route')) {
+    /**
+     * Generate the URL string to a named route.
+     *
+     * @param  mixed  $value
+     * @param  callable|null  $callback
+     * @return mixed
+     */
+    function route(string $route, array $parameters = [], array $options = []): string
+    {
+        $generatedUrl = Url::fromRoute($route, $parameters, $options)->toString(true);
+
+        return $generatedUrl->getGeneratedUrl();
+    }
+}
+
+if (! function_exists('url')) {
+    /**
+     * Generate the URL to a named route.
+     *
+     * @param  mixed  $value
+     * @param  callable|null  $callback
+     * @return mixed
+     */
+    function url(string $route, array $parameters = [], array $options = []): Url
+    {
+        return Url::fromRoute($route, $parameters, $options);
+    }
+}
+
+if (! function_exists('rescue')) {
+    /**
+     * Catch a potential exception and return a default value.
+     *
+     * @param  callable  $callback
+     * @param  mixed  $rescue
+     * @return mixed
+     */
+    function rescue(callable $callback, $rescue = null)
+    {
+        try {
+            return $callback();
+        } catch (Throwable $e) {
+            return value($rescue);
+        }
+    }
+}
+
+if (! function_exists('redirect')) {
+    /**
+     * Returns a new RedirectResponse.
+     *
+     * @param  callable  $callback
+     * @param  mixed  $redirect
+     * @return mixed
+     */
+    function redirect($route, array $route_parameters = [], array $options = [], $status = 302)
+    {
+        $options['absolute'] = TRUE;
+
+        return new RedirectResponse(route($route, $route_parameters, $options), $status);
+    }
+}
+
+if (!function_exists('optional')) {
+    /**
+     * Provide access to optional objects.
+     *
+     * @param mixed $value
+     * @param callable|null $callback
+     * @return mixed
+     */
+    function optional($value = null, callable $callback = null)
+    {
+        if (is_null($callback)) {
+            return new Optional($value);
+        } elseif (!is_null($value)) {
+            return $callback($value);
+        }
+    }
+}
