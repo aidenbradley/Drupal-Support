@@ -123,7 +123,7 @@ if (! function_exists('redirect')) {
      * @param  mixed  $redirect
      * @return mixed
      */
-    function redirect($route, array $route_parameters = [], array $options = [], $status = 302)
+    function redirect($route, int $status = 302, array $route_parameters = [], array $options = [])
     {
         $options['absolute'] = TRUE;
 

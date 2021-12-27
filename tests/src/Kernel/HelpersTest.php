@@ -5,6 +5,8 @@ namespace Drupal\Tests\drupal_support\Kernel;
 use Drupal\Core\Url;
 use Drupal\drupal_support\HigherOrderTapProxy;
 use Drupal\KernelTests\KernelTestBase;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class HelpersTest extends KernelTestBase
 {
@@ -94,5 +96,22 @@ class HelpersTest extends KernelTestBase
         $this->assertEquals('hello', rescue(function() use ($class) {
             return $class->returnHello();
         }));
+    }
+
+    /** @test */
+    public function redirect_helper(): void
+    {
+        // test against node routes
+        $this->enableModules([
+            'node',
+        ]);
+
+        $redirect = redirect('node.add_page');
+
+        $this->assertInstanceOf(RedirectResponse::class, $redirect);
+        $this->assertEquals('http://localhost/node/add', $redirect->getTargetUrl());
+
+        $redirect = redirect('node.add_page', Response::HTTP_MOVED_PERMANENTLY);
+        $this->assertEquals(Response::HTTP_MOVED_PERMANENTLY, $redirect->getStatusCode());
     }
 }
