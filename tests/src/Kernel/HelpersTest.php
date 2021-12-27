@@ -4,7 +4,9 @@ namespace Drupal\Tests\drupal_support\Kernel;
 
 use Drupal\Core\Url;
 use Drupal\drupal_support\HigherOrderTapProxy;
+use Drupal\drupal_support\Optional;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\Tests\drupal_support\Kernel\TestClasses\TestClass;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,15 +19,7 @@ class HelpersTest extends KernelTestBase
     /** @test */
     public function tap_helper(): void
     {
-        $class = new class {
-            /** @var string|null */
-            public $title = null;
-
-            public function setTitle(string $title): void
-            {
-                $this->title = $title;
-            }
-        };
+        $class = TestClass::create();
 
         $this->assertInstanceOf(HigherOrderTapProxy::class, tap($class));
 
@@ -77,17 +71,7 @@ class HelpersTest extends KernelTestBase
     /** @test */
     public function rescue_helper(): void
     {
-        $class = new class {
-            public function throwException(): void
-            {
-                throw new \Exception();
-            }
-
-            public function returnHello(): string
-            {
-                return 'hello';
-            }
-        };
+        $class = TestClass::create();
 
         $this->assertEquals('fallback value', rescue(function() use ($class) {
             $class->throwException();
@@ -113,5 +97,24 @@ class HelpersTest extends KernelTestBase
 
         $redirect = redirect('node.add_page', Response::HTTP_MOVED_PERMANENTLY);
         $this->assertEquals(Response::HTTP_MOVED_PERMANENTLY, $redirect->getStatusCode());
+    }
+
+    /** @test */
+    public function optional_helper(): void
+    {
+        $class = TestClass::create();
+
+        $this->assertInstanceOf(Optional::class, optional($class));
+
+        optional($class, function(TestClass $class) {
+            $class->setTitle('title set');
+
+            return $class;
+        });
+
+        $this->assertEquals('title set', $class->title);
+
+        $this->assertNull(optional(null)->propertyThatDoesNotExist);
+        $this->assertNull(optional(null)->methodThatDoesNotExist());
     }
 }
